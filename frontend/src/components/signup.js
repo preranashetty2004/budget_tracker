@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './signup.css';
 import Navbar from './navbar';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // ✅ Import axios
 
 function Signup() {
   const navigate = useNavigate();
@@ -18,12 +19,22 @@ function Signup() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Normally, you'd send this to the backend to store user data
-    if (formData.name && formData.email && formData.password) {
-      console.log('User Registered:', formData);
-      alert('Signup successful! Please login.');
-      navigate('/signin');
-    }
+    axios.post('http://localhost:5000/api/users/register', formData)
+      .then(() => {
+        alert('Signup successful! Please login.');
+        navigate('/signin');
+      })
+      .catch((err) => {
+  console.error('Signup failed:', err.response?.data || err.message);
+  if (err.response?.status === 409) {
+    alert('Email already in use.');
+  } else if (err.response?.status === 400) {
+    alert('Please fill all fields.');
+  } else {
+    alert('Signup failed. Try again later.');
+  }
+});
+
   };
 
   return (

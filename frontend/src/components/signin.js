@@ -3,6 +3,7 @@ import './signin.css';
 import Navbar from './navbar';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
+import axios from 'axios'; // ✅ Axios import
 
 function Signin() {
   const { setUser } = useContext(UserContext);
@@ -12,20 +13,18 @@ function Signin() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Simulate successful login
-    const loggedInUser = {
-  email,
-  password,
-  name: '',
-  dob: '',
-  workplace: '',
-  occupation: ''
-};
-setUser(loggedInUser);
-     // Set profile in context
 
-    navigate('/');             // Redirect to Home
+    axios.post('http://localhost:5000/api/users/login', {
+      email,
+      password
+    })
+    .then((res) => {
+      setUser(res.data);      // Set user in context
+      navigate('/');
+    })
+    .catch(() => {
+      alert('Invalid email or password');
+    });
   };
 
   return (

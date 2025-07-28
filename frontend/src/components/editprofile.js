@@ -3,6 +3,7 @@ import './editprofile.css';
 import Navbar from './navbar';
 import { UserContext } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function EditProfile() {
   const { user, setUser } = useContext(UserContext);
@@ -24,8 +25,17 @@ function EditProfile() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log('Editing profile for user:', user.id);
+   axios.put(`http://localhost:5000/api/users/update/${user.id}`, formData)
+  .then(() => {
     setUser(prev => ({ ...prev, ...formData }));
     navigate('/profile');
+  })
+  .catch((err) => {
+  console.error('Update error:', err.response?.data || err.message); // 👈 log detailed error
+  alert('Failed to update profile.');
+});
+
   };
 
   return (
