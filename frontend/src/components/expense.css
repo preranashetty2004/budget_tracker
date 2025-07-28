@@ -1,0 +1,94 @@
+/* expense.css */
+.expense-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 10px;
+}
+
+.expense-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.expense-form input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.expense-form button {
+  padding: 10px;
+  background-color: #0066ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.expense-form button:hover {
+  background-color: #004ecc;
+}
+
+.expense-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.expense-table th,
+.expense-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.expense-table th {
+  background-color: #f5f5f5;
+}
+/* Add these to the end of expense.css */
+
+.action-btn {
+  margin: 0 5px;
+  padding: 6px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.delete {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.edit:hover {
+  background-color: #e0a800;
+}
+
+.delete:hover {
+  background-color: #c82333;
+}
+
+.over-budget-row {
+  background-color: #ffe6e6;
+}
+
+.alert {
+  color: red;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+
+
