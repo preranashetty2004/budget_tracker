@@ -1,31 +1,50 @@
-import React, { useState,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './budget.css';
 import Navbar from './navbar';
 import { BudgetContext } from '../context/BudgetContext';
+import axios from 'axios';
 
 function Budget() {
-   const { budgets, setBudgets } = useContext(BudgetContext);
+  const { budgets, setBudgets } = useContext(BudgetContext);
   const [formData, setFormData] = useState({
     category: '',
     amount: '',
     description: ''
   });
   const [editIndex, setEditIndex] = useState(null);
+  const API = 'http://localhost:5000/api/budgets';
+
+  useEffect(() => {
+    axios.get(API)
+      .then(res => setBudgets(res.data))
+      .catch(err => console.error('Fetch error:', err));
+  }, [setBudgets]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (editIndex !== null) {
-      const updatedBudgets = [...budgets];
-      updatedBudgets[editIndex] = formData;
-      setBudgets(updatedBudgets);
-      setEditIndex(null);
+      const id = budgets[editIndex].id;
+      try {
+        await axios.put(`${API}/${id}`, formData);
+        const updated = [...budgets];
+        updated[editIndex] = { ...formData, id };
+        setBudgets(updated);
+        setEditIndex(null);
+      } catch (err) {
+        console.error('Update failed:', err);
+      }
     } else {
-      setBudgets([...budgets, formData]);
+      try {
+        const res = await axios.post(API, formData);
+        setBudgets([...budgets, { ...formData, id: res.data.id }]);
+      } catch (err) {
+        console.error('Add failed:', err);
+      }
     }
 
     setFormData({ category: '', amount: '', description: '' });
@@ -36,43 +55,29 @@ function Budget() {
     setEditIndex(index);
   };
 
-  const handleDelete = (index) => {
-    const filtered = budgets.filter((_, i) => i !== index);
-    setBudgets(filtered);
-    if (editIndex === index) {
-      setFormData({ category: '', amount: '', description: '' });
-      setEditIndex(null);
+  const handleDelete = async (index) => {
+    const id = budgets[index].id;
+    try {
+      await axios.delete(`${API}/${id}`);
+      const updated = budgets.filter((_, i) => i !== index);
+      setBudgets(updated);
+      if (editIndex === index) {
+        setFormData({ category: '', amount: '', description: '' });
+        setEditIndex(null);
+      }
+    } catch (err) {
+      console.error('Delete failed:', err);
     }
   };
 
   return (
     <div className="budget-container">
-    <Navbar/>
+      <Navbar />
       <h2>{editIndex !== null ? 'Update Budget' : 'Add Budget'}</h2>
       <form onSubmit={handleSubmit} className="budget-form">
-        <input
-          type="text"
-          name="category"
-          placeholder="Category Name"
-          value={formData.category}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="number"
-          name="amount"
-          placeholder="Budget"
-          value={formData.amount}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="description"
-          placeholder="Description"
-          value={formData.description}
-          onChange={handleChange}
-        />
+        <input type="text" name="category" placeholder="Category" value={formData.category} onChange={handleChange} required />
+        <input type="number" name="amount" placeholder="Amount" value={formData.amount} onChange={handleChange} required />
+        <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange} />
         <button type="submit">{editIndex !== null ? 'Update' : 'Add'}</button>
       </form>
 
@@ -80,16 +85,16 @@ function Budget() {
       <table className="budget-table">
         <thead>
           <tr>
-            <th>S.No</th>
-            <th>Category Name</th>
-            <th>Budget</th>
+            <th>#</th>
+            <th>Category</th>
+            <th>Amount</th>
             <th>Description</th>
-            <th>Action</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {budgets.map((item, index) => (
-            <tr key={index}>
+            <tr key={item.id}>
               <td>{index + 1}</td>
               <td>{item.category}</td>
               <td>{item.amount}</td>
