@@ -21,6 +21,9 @@ function Profile() {
               <p><strong>Date of Birth:</strong> {user.dob || 'Not set'}</p>
               <p><strong>Workplace:</strong> {user.workplace || 'Not set'}</p>
               <p><strong>Occupation:</strong> {user.occupation || 'Not set'}</p>
+              <p><strong>Salary:</strong> {user.salary || 'Not set'}</p>
+              
+              
               <button className="edit-btn" onClick={() => navigate('/edit-profile')}>
                 Edit Profile
               </button>

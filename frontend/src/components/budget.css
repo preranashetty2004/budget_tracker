@@ -75,3 +75,14 @@
 .delete:hover {
   background-color: #c82333;
 }
+
+.budget-summary{
+   margin: 15px 0;
+  padding: 15px;
+  background-color: #eef9f1;
+  border-left: 5px solid #28a745;
+  font-size: 16px;
+  font-weight: 500;
+  color: #155724;
+}
+

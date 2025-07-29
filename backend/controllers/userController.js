@@ -39,10 +39,10 @@ const loginUser = (req, res) => {
 // Update profile
 const updateUserProfile = (req, res) => {
   const { id } = req.params;
-  const { name, dob, workplace, occupation } = req.body;
+  const { name, dob, workplace, occupation, salary } = req.body;
 
-  const sql = 'UPDATE users SET name = ?, dob = ?, workplace = ?, occupation = ? WHERE id = ?';
-  db.query(sql, [name, dob, workplace, occupation, id], (err) => {
+  const sql = 'UPDATE users SET name = ?, dob = ?, workplace = ?, occupation = ?, salary = ? WHERE id = ?';
+  db.query(sql, [name, dob, workplace, occupation, salary, id], (err) => {
     if (err) {
       console.error('Error updating profile:', err);
       return res.status(500).json({ error: 'Update failed' });
@@ -51,6 +51,7 @@ const updateUserProfile = (req, res) => {
     res.status(200).json({ message: 'Profile updated successfully' });
   });
 };
+
 
 // Get user by ID (used in profile)
 const getUserById = (req, res) => {

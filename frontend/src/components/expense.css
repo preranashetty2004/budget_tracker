@@ -89,6 +89,27 @@
   font-weight: bold;
   margin-top: 4px;
 }
+.alert.over-salary {
+  background-color: #ffdddd;
+  color: #d8000c;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #d8000c;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.remaining-balance-summary {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #eef9f1;
+  border-left: 5px solid #28a745;
+  font-size: 18px;
+  font-weight: 500;
+  color: #155724;
+}
+
+
 
 
 

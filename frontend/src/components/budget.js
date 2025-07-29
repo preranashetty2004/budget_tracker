@@ -8,6 +8,8 @@ import { UserContext } from '../context/UserContext';
 function Budget() {
   const { budgets, setBudgets } = useContext(BudgetContext);
   const { user } = useContext(UserContext);
+  const [totalBudget, setTotalBudget] = useState(0);
+const [totalExpenses, setTotalExpenses] = useState(0);
   const [formData, setFormData] = useState({
     category: '',
     amount: '',
@@ -16,11 +18,24 @@ function Budget() {
   const [editIndex, setEditIndex] = useState(null);
   const API = 'http://localhost:5000/api/budgets';
 
- useEffect(() => {
+useEffect(() => {
   if (user && user.id) {
+    // budgets
     axios.get(`http://localhost:5000/api/budgets/${user.id}`)
-      .then(res => setBudgets(res.data))
-      .catch(err => console.error('Fetch error:', err));
+      .then(res => {
+        setBudgets(res.data);
+        const total = res.data.reduce((sum, item) => sum + parseFloat(item.amount), 0);
+        setTotalBudget(total);
+      })
+      .catch(err => console.error('Budget fetch error:', err));
+
+    // expenses
+    axios.get(`http://localhost:5000/api/expenses/${user.id}`)
+      .then(res => {
+        const total = res.data.reduce((sum, item) => sum + parseFloat(item.amount), 0);
+        setTotalExpenses(total);
+      })
+      .catch(err => console.error('Expense fetch error:', err));
   }
 }, [user, setBudgets]);
 
@@ -78,13 +93,23 @@ const handleSubmit = async (e) => {
     }
   };
 
+ 
+
+
   return (
     <div className="budget-container">
       <Navbar />
       <h2>{editIndex !== null ? 'Update Budget' : 'Add Budget'}</h2>
+       <div className="budget-summary">
+    <h3>💰 Financial Overview</h3>
+    <p><strong>Salary:</strong> ₹{user?.salary || 0}</p>
+    {/* <p><strong>Total Budget:</strong> ₹{totalBudget|| 0}</p>
+    <p><strong>Total Expenses:</strong> ₹{totalExpenses.toFixed(2)}</p> */}
+    <p><strong>Remaining Balance:</strong> ₹{(user?.salary - totalExpenses).toFixed(2)}</p>
+  </div>
       <form onSubmit={handleSubmit} className="budget-form">
         <input type="text" name="category" placeholder="Category" value={formData.category} onChange={handleChange} required />
-        <input type="number" name="amount" placeholder="Amount" value={formData.amount} onChange={handleChange} required />
+        <input type="number" name="amount" placeholder="Budget" value={formData.amount} onChange={handleChange} required />
         <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange} />
         <button type="submit">{editIndex !== null ? 'Update' : 'Add'}</button>
       </form>
@@ -95,9 +120,10 @@ const handleSubmit = async (e) => {
           <tr>
             <th>#</th>
             <th>Category</th>
-            <th>Amount</th>
+            <th>Budget</th>
             <th>Description</th>
             <th>Actions</th>
+        
           </tr>
         </thead>
         <tbody>

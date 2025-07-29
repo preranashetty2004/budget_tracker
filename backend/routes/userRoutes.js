@@ -4,10 +4,9 @@ const db = require('../db');
 
 // Register a new user
 router.post('/register', (req, res) => {
-  const { name, email, password } = req.body;
-  const sql = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
-
-  db.query(sql, [name, email, password], (err, result) => {
+  const { id,name, dob, workplace, occupation, salary } = req.body;
+  const sql = 'UPDATE users SET name = ?, dob = ?, workplace = ?, occupation = ?, salary = ? WHERE id = ?';
+  db.query(sql, [name, dob, workplace, occupation, salary, id], (err, result)=> {
     if (err) {
       if (err.code === 'ER_DUP_ENTRY') {
         return res.status(409).json({ error: 'Email already in use' });
@@ -40,7 +39,8 @@ router.post('/login', (req, res) => {
       email: user.email,
       dob: user.dob,
       workplace: user.workplace,
-      occupation: user.occupation
+      occupation: user.occupation,
+      salary:user.salary
     });
   });
 });

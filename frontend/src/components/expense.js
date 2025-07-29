@@ -9,6 +9,9 @@ function Expense() {
   const [expenses, setExpenses] = useState([]);
   const { budgets } = useContext(BudgetContext);
   const { user } = useContext(UserContext);
+  const totalSpent = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+  const overSalary = user?.salary && totalSpent > parseFloat(user.salary);
+
   const [formData, setFormData] = useState({
     category: '',
     date: '',
@@ -125,6 +128,17 @@ function Expense() {
         <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange} />
         <button type="submit">{editIndex !== null ? 'Update' : 'Add'}</button>
       </form>
+{overSalary && (
+  <div className="alert over-salary">
+    ⚠ Warning: You’ve exceeded your salary!
+  </div>
+)}
+
+<div className="remaining-balance-summary">
+  <p><strong>Remaining Balance:</strong> ₹{(user?.salary - totalSpent).toFixed(2)}</p>
+</div>
+
+
 
       <h3>Expense History</h3>
       <table className="expense-table">

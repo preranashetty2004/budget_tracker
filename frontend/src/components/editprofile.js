@@ -13,7 +13,8 @@ function EditProfile() {
     name: user.name || '',
     dob: user.dob || '',
     workplace: user.workplace || '',
-    occupation: user.occupation || ''
+    occupation: user.occupation || '',
+    salary:user.salary||''
   });
 
   const handleChange = (e) => {
@@ -48,6 +49,8 @@ function EditProfile() {
           <input type="date" name="dob" placeholder="Date of Birth" value={formData.dob} onChange={handleChange} />
           <input type="text" name="workplace" placeholder="Workplace" value={formData.workplace} onChange={handleChange} />
           <input type="text" name="occupation" placeholder="Occupation" value={formData.occupation} onChange={handleChange} />
+          <input type="number" name="salary" placeholder="Salary" value={formData.salary} onChange={handleChange} />
+
           <button type="submit">Save</button>
         </form>
       </div>
