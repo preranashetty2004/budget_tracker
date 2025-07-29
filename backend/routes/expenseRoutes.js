@@ -8,7 +8,7 @@ const {
 
 } = require('../controllers/expenseController');
 
-router.get('/', getExpenses);
+router.get('/:user_id', getExpenses);
 router.post('/', addExpense);
 router.delete('/:id', deleteExpense);
 router.put('/:id',updateExpense);

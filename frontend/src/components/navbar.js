@@ -1,14 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './navbar.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { UserContext } from '../context/UserContext';
 
 function Navbar() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
+  const location = useLocation(); // get current route
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
   };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+    navigate('/signin');
+  };
+
+  const currentPath = location.pathname;
 
   return (
     <>
@@ -24,13 +35,36 @@ function Navbar() {
 
       {isSidebarOpen && (
         <div className="sidebar">
-          <button className="sidebar-btn" onClick={() => navigate('/signin')}>
-            Sign In
+          {/* Always show Home button */}
+          <button className="sidebar-btn" onClick={() => navigate('/')}>
+            Home
           </button>
-          <button className="sidebar-btn" onClick={() => navigate('/profile')}>
-            Profile
-          </button>
-          {/* You can add more links here */}
+
+          {currentPath === '/' && (
+            <>
+              <button className="sidebar-btn" onClick={() => navigate('/signin')}>
+                Sign In
+              </button>
+              <button className="sidebar-btn" onClick={() => navigate('/profile')}>
+                Profile
+              </button>
+              <button className="sidebar-btn" onClick={handleLogout}>
+                Logout
+              </button>
+            </>
+          )}
+
+          {currentPath === '/budget' && (
+            <button className="sidebar-btn" onClick={() => navigate('/expense')}>
+              Expense
+            </button>
+          )}
+
+          {currentPath === '/expense' && (
+            <button className="sidebar-btn" onClick={() => navigate('/budget')}>
+              Budget
+            </button>
+          )}
         </div>
       )}
     </>
@@ -38,4 +72,3 @@ function Navbar() {
 }
 
 export default Navbar;
-

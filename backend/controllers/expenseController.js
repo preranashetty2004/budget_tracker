@@ -2,17 +2,17 @@ const db = require('../db');
 
 // GET all expenses
 exports.getExpenses = (req, res) => {
-  db.query('SELECT * FROM expenses', (err, results) => {
+  const { user_id } = req.params;
+  db.query('SELECT * FROM expenses WHERE user_id = ?', [user_id], (err, results) => {
     if (err) return res.status(500).send(err);
     res.json(results);
   });
 };
-
 // POST a new expense
 exports.addExpense = (req, res) => {
-  const { category, date, amount, paymentMode, description } = req.body;
-  const sql = 'INSERT INTO expenses (category, date, amount, paymentMode, description) VALUES (?, ?, ?, ?, ?)';
-  db.query(sql, [category, date, amount, paymentMode, description], (err, result) => {
+  const { category, date, amount, paymentMode, description, user_id } = req.body;
+  const sql = 'INSERT INTO expenses (category, date, amount, paymentMode, description, user_id) VALUES (?, ?, ?, ?, ?, ?)';
+  db.query(sql, [category, date, amount, paymentMode, description, user_id], (err, result) => {
     if (err) return res.status(500).send(err);
     res.status(201).json({ id: result.insertId, ...req.body });
   });

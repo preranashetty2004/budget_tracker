@@ -2,11 +2,13 @@ import React, { useState, useEffect, useContext } from 'react';
 import './expense.css';
 import Navbar from './navbar';
 import { BudgetContext } from '../context/BudgetContext';
+import { UserContext } from '../context/UserContext';
 import axios from 'axios';
 
 function Expense() {
   const [expenses, setExpenses] = useState([]);
   const { budgets } = useContext(BudgetContext);
+  const { user } = useContext(UserContext);
   const [formData, setFormData] = useState({
     category: '',
     date: '',
@@ -20,10 +22,12 @@ function Expense() {
 
   // Fetch expenses from backend on component mount
   useEffect(() => {
-    axios.get(API)
+  if (user && user.id) {
+    axios.get(`http://localhost:5000/api/expenses/${user.id}`)
       .then(res => setExpenses(res.data))
       .catch(err => console.error('Error fetching expenses:', err));
-  }, []);
+  }
+}, [user]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,6 +43,7 @@ function Expense() {
 
     try {
       await axios.put(`http://localhost:5000/api/expenses/${expenseToUpdate.id}`, formData);
+
       const updatedExpenses = [...expenses];
       updatedExpenses[editIndex] = { ...formData, id: expenseToUpdate.id }; // include ID
       setExpenses(updatedExpenses);
@@ -46,15 +51,19 @@ function Expense() {
     } catch (error) {
       console.error('Error updating expense:', error);
     }
-  } else {
-    try {
-      const response = await axios.post('http://localhost:5000/api/expenses', formData);
-      const newExpense = { ...formData, id: response.data.id };
-      setExpenses([...expenses, newExpense]);
-    } catch (error) {
-      console.error('Error adding expense:', error);
-    }
+ } else {
+  try {
+    const response = await axios.post('http://localhost:5000/api/expenses', {
+      ...formData,
+      user_id: user.id  // ✅ link expense to user
+    });
+    const newExpense = { ...formData, id: response.data.id };
+    setExpenses([...expenses, newExpense]);
+  } catch (error) {
+    console.error('Error adding expense:', error);
   }
+}
+
 
     setFormData({
       category: '',

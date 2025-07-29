@@ -3,7 +3,9 @@ const db = require('../db');
 
 // Get all budgets
 const getBudgets = (req, res) => {
-  db.query('SELECT * FROM budgets', (err, results) => {
+  const { user_id } = req.params;
+  const sql = 'SELECT * FROM budgets WHERE user_id = ?';
+  db.query(sql, [user_id], (err, results) => {
     if (err) return res.status(500).json({ error: 'DB error' });
     res.status(200).json(results);
   });
@@ -11,14 +13,13 @@ const getBudgets = (req, res) => {
 
 // Add new budget
 const addBudget = (req, res) => {
-  const { category, amount, description } = req.body;
-  const sql = 'INSERT INTO budgets (category, amount, description) VALUES (?, ?, ?)';
-  db.query(sql, [category, amount, description], (err, result) => {
+  const { category, amount, description, user_id } = req.body;
+  const sql = 'INSERT INTO budgets (category, amount, description, user_id) VALUES (?, ?, ?, ?)';
+  db.query(sql, [category, amount, description, user_id], (err, result) => {
     if (err) return res.status(500).json({ error: 'Insert failed' });
-    res.status(201).json({ id: result.insertId, category, amount, description });
+    res.status(201).json({ id: result.insertId, category, amount, description, user_id });
   });
 };
-
 // Update budget
 const updateBudget = (req, res) => {
   const { id } = req.params;

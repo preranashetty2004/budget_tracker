@@ -3,9 +3,11 @@ import './budget.css';
 import Navbar from './navbar';
 import { BudgetContext } from '../context/BudgetContext';
 import axios from 'axios';
+import { UserContext } from '../context/UserContext';
 
 function Budget() {
   const { budgets, setBudgets } = useContext(BudgetContext);
+  const { user } = useContext(UserContext);
   const [formData, setFormData] = useState({
     category: '',
     amount: '',
@@ -14,41 +16,47 @@ function Budget() {
   const [editIndex, setEditIndex] = useState(null);
   const API = 'http://localhost:5000/api/budgets';
 
-  useEffect(() => {
-    axios.get(API)
+ useEffect(() => {
+  if (user && user.id) {
+    axios.get(`http://localhost:5000/api/budgets/${user.id}`)
       .then(res => setBudgets(res.data))
       .catch(err => console.error('Fetch error:', err));
-  }, [setBudgets]);
+  }
+}, [user, setBudgets]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (editIndex !== null) {
-      const id = budgets[editIndex].id;
-      try {
-        await axios.put(`${API}/${id}`, formData);
-        const updated = [...budgets];
-        updated[editIndex] = { ...formData, id };
-        setBudgets(updated);
-        setEditIndex(null);
-      } catch (err) {
-        console.error('Update failed:', err);
-      }
-    } else {
-      try {
-        const res = await axios.post(API, formData);
-        setBudgets([...budgets, { ...formData, id: res.data.id }]);
-      } catch (err) {
-        console.error('Add failed:', err);
-      }
+  if (editIndex !== null) {
+    const id = budgets[editIndex].id;
+    try {
+      await axios.put(`${API}/${id}`, formData);
+      const updated = [...budgets];
+      updated[editIndex] = { ...formData, id };
+      setBudgets(updated);
+      setEditIndex(null);
+    } catch (err) {
+      console.error('Update failed:', err);
     }
+  } else {
+    try {
+      const res = await axios.post(API, {
+        ...formData,
+        user_id: user.id // ✅ send user_id
+      });
+      setBudgets([...budgets, { ...formData, id: res.data.id }]);
+    } catch (err) {
+      console.error('Add failed:', err);
+    }
+  }
 
-    setFormData({ category: '', amount: '', description: '' });
-  };
+  setFormData({ category: '', amount: '', description: '' });
+};
+
 
   const handleEdit = (index) => {
     setFormData(budgets[index]);

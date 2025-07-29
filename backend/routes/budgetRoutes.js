@@ -7,7 +7,7 @@ const {
   deleteBudget
 } = require('../controllers/budgetController');
 
-router.get('/', getBudgets);
+router.get('/:user_id', getBudgets);
 router.post('/', addBudget);
 router.put('/:id', updateBudget);   // ✅ must include id
 router.delete('/:id', deleteBudget);
