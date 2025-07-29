@@ -1,2 +1,5 @@
 # Cashly
-A Budget Tracker is a financial management tool that helps users set, plan, and monitor their income and expenses over a specific period. 
+Cashly is a comprehensive financial management tool designed to help users take control of their finances by planning budgets and tracking expenses in one place. 
+
+#Signup page
+
