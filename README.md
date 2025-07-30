@@ -4,7 +4,7 @@ Cashly is a comprehensive financial management tool designed to help users take 
 # Signup page
 ![image alt](https://github.com/preranashetty2004/budget_tracker/blob/main/screenshots/sign%20up.png)
 
-#SignIn page
+# SignIn page
 ![image alt](https://github.com/preranashetty2004/budget_tracker/blob/main/screenshots/sign%20in.png)
 
 # Home page
